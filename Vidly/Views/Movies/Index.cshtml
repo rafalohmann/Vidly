@@ -4,6 +4,9 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <h2>Movies</h2>
+
+@Html.ActionLink("New", "Form", "Movies", null, new { @class = "btn btn-primary" })
+
 @if (!Model.Any())
 {
     <p>We don't have any Movies yet.</p>
@@ -21,7 +24,7 @@ else
             @foreach (var Movie in Model)
             {
                 <tr>
-                    <td>@Html.ActionLink(Movie.Name, "Details", "Movies", new { id = Movie.Id }, null)</td>
+                    <td>@Html.ActionLink(Movie.Name, "Edit", "Movies", new { id = Movie.Id }, null)</td>
                     <td>@Movie.Genre.Name</td>
                 </tr>
             }
