@@ -16,7 +16,19 @@ namespace Vidly.Controllers
             _context = new ApplicationDbContext();
         }
 
-        public ActionResult CustomerForm()
+        protected override void Dispose(bool disposing)
+        {
+            _context.Dispose();
+        }
+
+        public ViewResult Index()
+        {
+            var customers = _context.Customers.Include(c => c.MembershipType).ToList();
+
+            return View(customers);
+        }
+
+        public ActionResult Form()
         {
             var membershipTypes = _context.MembershipTypes.ToList();
             var viewModel = new CustomerFormViewModel
@@ -24,7 +36,23 @@ namespace Vidly.Controllers
                 MembershipTypes = membershipTypes
             };
 
-            return View("CustomerForm", viewModel);
+            return View("Form", viewModel);
+        }
+
+        public ActionResult Edit(int Id)
+        {
+            var customer = _context.Customers.Include(c => c.MembershipType).SingleOrDefault(c => c.Id == Id);
+
+            if (customer == null)
+                return HttpNotFound();
+
+            var viewModel = new CustomerFormViewModel
+            {
+                Customer = customer,
+                MembershipTypes = _context.MembershipTypes.ToList()
+            };
+
+            return View("Form", viewModel);
         }
 
         [HttpPost]
@@ -44,43 +72,6 @@ namespace Vidly.Controllers
             _context.SaveChanges();
 
             return RedirectToAction("Index", "Customers");
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            _context.Dispose();
-        }
-
-        public ViewResult Index()
-        {
-            var customers = _context.Customers.Include(c => c.MembershipType).ToList();
-
-            return View(customers);
-        }
-
-        public ActionResult Details(int Id)
-        {
-            var customer = _context.Customers.Include(c => c.MembershipType).SingleOrDefault(c => c.Id == Id);
-
-            if (customer == null)
-                return HttpNotFound();
-
-            return View(customer);
-        }
-
-        public ActionResult Edit(int Id)
-        {
-            var customer = _context.Customers.Include(c => c.MembershipType).SingleOrDefault(c => c.Id == Id);
-
-            if (customer == null)
-                return HttpNotFound();
-
-            var viewModel = new CustomerFormViewModel {
-                Customer = customer,
-                MembershipTypes = _context.MembershipTypes.ToList()
-            };
-
-            return View("CustomerForm", viewModel);
         }
     }
 }
