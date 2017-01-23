@@ -43,14 +43,16 @@
 
             $('#customers').on('click', '.js-delete', function () {
                 var button = $(this);
-                bootbox.confirm('Are you suuuuuure?', function () {
-                    $.ajax({
-                        url: '/api/customers/' + button.attr('data-customer-id'),
-                        method: 'DELETE',
-                        success: function () {
-                            table.row(button.closest('tr')).remove().draw();
-                        }
-                    });
+                bootbox.confirm('Are you suuuuuure?', function (confirm) {
+                    if (confirm) {
+                        $.ajax({
+                            url: '/api/customers/' + button.attr('data-customer-id'),
+                            method: 'DELETE',
+                            success: function () {
+                                table.row(button.closest('tr')).remove().draw();
+                            }
+                        });
+                    }
                 });
             });
         });
